@@ -19,6 +19,7 @@ namespace stocks
             con.Open();
             string userid = tb_username.Text;
             string password = tb_password.Text;
+             LoggedUser = userid;
             SqlCommand cmd = new SqlCommand("select Username,Password from users where Username='" + userid + "'and Password='" + password + "'", con);
             SqlDataAdapter da = new SqlDataAdapter(cmd);
             DataTable dt = new DataTable();
@@ -28,7 +29,6 @@ namespace stocks
                 MessageBox.Show("Login sucess");
                 this.Hide();
                 new Form2().Show();
-                LoggedUser = userid;
             }
             else
             {
@@ -38,6 +38,9 @@ namespace stocks
 
         }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
 
+        }
     }
 }
