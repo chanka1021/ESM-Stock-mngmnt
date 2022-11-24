@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -26,12 +27,11 @@ namespace stocks
         {
             Auto();
             lb_username.Text = Form1.LoggedUser;
-
-
             da = new SqlDataAdapter("select * from histo ", con);
             DataTable dt = new DataTable();
             da.Fill(dt);
             dg_histo.DataSource = dt;
+
         }
         public void Auto()
 
@@ -73,55 +73,74 @@ namespace stocks
                   where (string)dr["Pn"] == pn
                   select (int)dr["Stock"]).FirstOrDefault();
             tb_stock.Text=stock.ToString();
+            numericUp_qtt.Maximum = stock;
             ///
-
-
         }
 
         private void bt_insert_Click(object sender, EventArgs e)
         {
-            DateTime Date = DateTime.Now;
-            string username = Form1.LoggedUser;
-            string pn = tb_pn.Text;
-            string qtt = numericUp_qtt.Text;
-            string machine = tb_machine.Text;
             con.Open();
+if (tb_machine.Text.All(Char.IsDigit) && tb_machine.Text !="" && tb_stock.Text.All(Char.IsDigit) && tb_stock.Text != "") 
+            {
+            //// UPDATE STOCK
+            int newstock = Int32.Parse(tb_stock.Text)- Decimal.ToInt32(numericUp_qtt.Value);
+            string pn = tb_pn.Text;
+            string querystk = "UPDATE stock SET stock=@newstock WHERE Pn=@pn";
+            SqlCommand cmd2 = new SqlCommand(querystk, con);
+            cmd2.Parameters.AddWithValue("@newstock", newstock);
+            cmd2.Parameters.AddWithValue("@pn", pn);
+            cmd2.ExecuteNonQuery();
+            MessageBox.Show("stock updated");
+            /////////////////INSERT INTO HISTORIQUE TABLE
+            ///
 
-            try
-            {
-                SqlCommand cmd = new SqlCommand("Insert Into histo (date,username,pn,qtt,machine) values (@Date,@username,@pn,@qtt,@machine)", con);
-                cmd.Parameters.AddWithValue("@date", Date);
-                cmd.Parameters.AddWithValue("@username", username);
-                cmd.Parameters.AddWithValue("@pn", pn);
-                cmd.Parameters.AddWithValue("@qtt", qtt);
-                cmd.Parameters.AddWithValue("@machine", machine);
-                int result = cmd.ExecuteNonQuery();
-                if (result == 1)
-                {   
-                    MessageBox.Show("Record Inserted Successfully!");
-                    tb_pn.Text = "";
-                    numericUp_qtt.Text = "1";
-                    tb_machine.Text = "";
-                    dg_histo.Update();
-                    dg_histo.Refresh();
-                }
-                else
+            
+                DateTime Date = DateTime.Now;
+                string username = Form1.LoggedUser;
+                string qtt = numericUp_qtt.Text;
+                string machine = tb_machine.Text;
+
+                try
                 {
-                    MessageBox.Show("Something went wrong!");
+                    SqlCommand cmd = new SqlCommand("Insert Into histo (date,username,pn,qtt,machine) values (@Date,@username,@pn,@qtt,@machine)", con);
+                    cmd.Parameters.AddWithValue("@date", Date);
+                    cmd.Parameters.AddWithValue("@username", username);
+                    cmd.Parameters.AddWithValue("@pn", pn);
+                    cmd.Parameters.AddWithValue("@qtt", qtt);
+                    cmd.Parameters.AddWithValue("@machine", machine);
+                    int result = cmd.ExecuteNonQuery();
+                    if (result == 1)
+                    {
+                        MessageBox.Show("historique Inserted Successfully!");
+                        tb_pn.Text = "";
+                        numericUp_qtt.Text = "1";
+                        tb_machine.Text = "";
+                        //RELOAD DATAGRID
+                        dg_histo.DataSource = null;
+                        da = new SqlDataAdapter("select * from histo ", con);
+                        DataTable dt = new DataTable();
+                        da.Fill(dt);
+                        dg_histo.DataSource = dt;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Something went wrong!");
+                    }
                 }
-            }
-            catch (SqlException ex)
-            {
-                MessageBox.Show("We have found error with operation on database: " + ex.Message);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("We have found error in your code: " + ex.Message);
-            }
-            finally
-            {
-                con.Close();
-            }
+                catch (SqlException ex)
+                {
+                    MessageBox.Show("We have found error with operation on database: " + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("We have found error in your code: " + ex.Message);
+                }
+                finally
+                {
+                    con.Close();
+                }
+            }else { MessageBox.Show(" values is null or not digit !!!"); }
+           
 
         }
     }

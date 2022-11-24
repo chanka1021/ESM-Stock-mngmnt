@@ -99,7 +99,7 @@
             dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.dg_histo.DefaultCellStyle = dataGridViewCellStyle2;
             this.dg_histo.Enabled = false;
-            this.dg_histo.Location = new System.Drawing.Point(-1, 254);
+            this.dg_histo.Location = new System.Drawing.Point(1, 254);
             this.dg_histo.Name = "dg_histo";
             this.dg_histo.RowTemplate.Height = 25;
             this.dg_histo.Size = new System.Drawing.Size(523, 150);
