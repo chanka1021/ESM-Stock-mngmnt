@@ -26,7 +26,6 @@ namespace stocks
             da.Fill(dt);
             if (dt.Rows.Count > 0)
             {
-                MessageBox.Show("Login sucess");
                 this.Hide();
                 new Form2().Show();
             }
@@ -40,7 +39,8 @@ namespace stocks
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            tb_password.Text = "1" ;
+            tb_username.Text = "user1";
         }
     }
 }
